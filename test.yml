@@ -39,3 +39,8 @@ steps:
   inputs:
     SourceFolder: 'C:\agent\taz\Development\ThirdPartySoftware\Java\jdk1.8.0_152_x64'
     TargetFolder: 'Tools\jdk1.8.0_152_x64'
+- task: BatchScript@1
+  displayName: 'Build InterAction.jar'
+  inputs:
+    filename: 'build_dev_jar.bat'
+  timeoutInMinutes: 30
