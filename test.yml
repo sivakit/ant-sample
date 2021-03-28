@@ -37,5 +37,5 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy JDK'
   inputs:
-    SourceFolder: '\\taz\Development\ThirdPartySoftware\Java\jdk1.8.0_152_x64'
+    SourceFolder: 'C:\agent\taz\Development\ThirdPartySoftware\Java\jdk1.8.0_152_x64'
     TargetFolder: 'Tools\jdk1.8.0_152_x64'
