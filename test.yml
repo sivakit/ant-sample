@@ -1,0 +1,41 @@
+pool:
+  name: Mine
+
+variables:
+  Build.Version.Product: '7.01.01'
+  Build.Folder.Drop.Base: 'C:\agent\taz\buildstaging$\IA.Core\AppServer\$(Build.Version.Product)'
+  Build.Version.Count: '-100'
+steps:
+- task: PowerShell@1
+  displayName: 'Update Build Version'
+  inputs:
+    scriptType: inlineScript
+    arguments: '-buildTextPath "$(Build.Folder.Drop.Base)\BuildCount.txt"'
+    inlineScript: |
+     param($buildTextPath)
+     
+     if(!(Test-Path -Path $buildTextPath)){
+       throw "Build Count file not found: $buildTextPath"
+     }else{
+       $oldCount = gc $buildTextPath
+     
+       if(!($oldCount -match "^[\d\.]+$")){
+        throw "Invalid build Count: $oldCount"
+       } else {
+        $newCount = [int]$oldCount + 1
+        echo "New Build Count: $newCount"
+        sc $buildTextPath $newCount -Force
+        Write-Host "##vso[task.setvariable variable=Build.Version.Count]$newCount"
+       }
+     }
+- task: PowerShell@1
+  displayName: 'Update Build Version in scope to tag repo using using built in BuildNumber variable'
+  inputs:
+    scriptType: inlineScript
+    inlineScript: 'Write-Host "##vso[build.updatebuildnumber]$(Build.Version.Product).$(Build.Version.Count)"'
+
+- task: CopyFiles@2
+  displayName: 'Copy JDK'
+  inputs:
+    SourceFolder: '\\taz\Development\ThirdPartySoftware\Java\jdk1.8.0_152_x64'
+    TargetFolder: 'Tools\jdk1.8.0_152_x64'
